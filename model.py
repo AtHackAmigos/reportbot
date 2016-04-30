@@ -52,8 +52,9 @@ class Log(db.Model):
   def __repr__(self):
     return "<Log log_id=%d, text=%s>" % (self.log_id, self.text)
 
+## Debug functions. ##
 
-def connect():
+def connect(app):
   # Connect to database
   app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
   app.config['SQLALCHEMY_ECHO'] = True
@@ -105,13 +106,17 @@ def create_mock_dataset():
   db.session.add(Event(phone=p1.phone, event_type=Event.PULSE))
   db.session.commit()
 
+
+def phone_exists(phone):
+  return bool(Registry.query.filter_by(phone=phone));
+
 def main(argv):
   if not len(argv):
-    print "Specify command: setup_table, create_mock, print_tables, clean"
+    print "Specify command: setup_table, create_mock, print_tables, clean, phone_exists"
 
   cmd = argv[1];
 
-  connect()
+  connect(app)
   print "Connected to DB."
 
   if cmd == "setup_table":
@@ -122,6 +127,8 @@ def main(argv):
     print "created mock data."
   elif cmd == "print_tables":
     print_tables()
+  elif cmd == "phone_exists":
+    print "Phone %s in the registry? %s" % (argv[2], phone_exists(argv[2]))
   elif cmd == "clean":
     print "torn down."
     tear_down()
