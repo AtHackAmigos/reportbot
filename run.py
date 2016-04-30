@@ -38,10 +38,18 @@ def welcome():
 @app.route('/home')
 def home():
   registry = Registry.query.all()
-  events = Event.query.all()
-  log = Log.query.all()
+  data = data_to_display(registry)
 
-  return render_template("homepage.html", registry=registry, events=events,log=log)
+
+  return render_template("homepage.html", registry=registry,data=data)
+
+  def data_to_display(registry):
+    data = {}
+    for row in registry:
+      user_events = Event.query.filter(Event.phone == row.phone).all()
+      data[row.phone] = user_events
+
+      return data
 
 
 if __name__ == "__main__":
