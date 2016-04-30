@@ -37,7 +37,7 @@ def welcome():
 
 @app.route('/home')
 def home():
-  all_stuff = registry.query.all()
+  all_stuff = Registry.query.all()
 
   return render_template("homepage.html", all_stuff=all_stuff)
 
