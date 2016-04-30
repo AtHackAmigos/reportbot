@@ -4,7 +4,7 @@ from flask import Flask, request
 from twilio.util import TwilioCapability
 import twilio.twiml
 from flask import Flask, render_template, request
-from model import connect, Registry
+from model import connect, Registry, Event, Log
 
 app = Flask(__name__)
 
