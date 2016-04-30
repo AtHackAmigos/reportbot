@@ -43,8 +43,6 @@ def home():
 
 
 if __name__ == "__main__":
-    # As a convenience that will allow us to work with db directly.
-    from server import app
     connect(app)
     print "Connected to DB."
 
