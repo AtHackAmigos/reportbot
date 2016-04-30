@@ -1,3 +1,7 @@
+httplib2==0.9
+itsdangerous==0.24
+twilio==3.6.9
+wsgiref==0.1.2
 Babel==2.3.4
 blinker==1.4
 coverage==4.0.3
