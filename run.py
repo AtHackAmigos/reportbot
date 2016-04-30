@@ -43,13 +43,13 @@ def home():
 
   return render_template("homepage.html", registry=registry,data=data)
 
-  def data_to_display(registry):
-    data = {}
-    for row in registry:
-      user_events = Event.query.filter(Event.phone == row.phone).all()
-      data[row.phone] = user_events
+def data_to_display(registry):
+  data = {}
+  for row in registry:
+    user_events = Event.query.filter(Event.phone == row.phone).all()
+    data[row.phone] = user_events
 
-      return data
+  return data
 
 
 if __name__ == "__main__":
