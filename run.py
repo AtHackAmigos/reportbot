@@ -34,7 +34,7 @@ def welcome():
   resp.say("Welcome to Twilio")
   return str(resp)
 
-@app.route('home')
+@app.route('/home')
 def home():
   return render_template("homepage.html")
 
