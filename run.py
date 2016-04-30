@@ -3,6 +3,7 @@ import os
 from flask import Flask, request
 from twilio.util import TwilioCapability
 import twilio.twiml
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -32,6 +33,10 @@ def welcome():
   resp = twilio.twiml.Response()
   resp.say("Welcome to Twilio")
   return str(resp)
+
+ @app.route('home')
+def home():
+  return render_template('homepage.html')
 
 if __name__ == "__main__":
 
