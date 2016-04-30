@@ -37,9 +37,11 @@ def welcome():
 
 @app.route('/home')
 def home():
-  all_stuff = Registry.query.all()
+  registry = Registry.query.all()
+  events = Event.query.all()
+  log = Log.query.all()
 
-  return render_template("homepage.html", all_stuff=all_stuff)
+  return render_template("homepage.html", registry=registry, events=events,log=log)
 
 
 if __name__ == "__main__":
