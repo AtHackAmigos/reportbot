@@ -4,7 +4,7 @@ import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask("reportbot")
+# app = Flask("reportbot")
 db = SQLAlchemy()
 
 DB_URL = os.environ.get("DB_URL", "")
@@ -53,7 +53,7 @@ class Log(db.Model):
     return "<Log log_id=%d, text=%s>" % (self.log_id, self.text)
 
 
-def connect():
+def connect(app):
   # Connect to database
   app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
   app.config['SQLALCHEMY_ECHO'] = True

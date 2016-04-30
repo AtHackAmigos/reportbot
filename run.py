@@ -4,6 +4,7 @@ from flask import Flask, request
 from twilio.util import TwilioCapability
 import twilio.twiml
 from flask import Flask, render_template, request
+from model import connect, Registry
 
 app = Flask(__name__)
 
@@ -36,9 +37,16 @@ def welcome():
 
 @app.route('/home')
 def home():
-  return render_template("homepage.html")
+  all_stuff = registry.query.all()
+
+  return render_template("homepage.html", all_stuff=all_stuff)
+
 
 if __name__ == "__main__":
+    # As a convenience that will allow us to work with db directly.
+    from server import app
+    connect(app)
+    print "Connected to DB."
 
   port = int(os.environ.get("PORT", 5000))
   app.run(host='0.0.0.0', port=port, debug=True)
