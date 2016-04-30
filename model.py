@@ -4,7 +4,7 @@ import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask("reportbot")
+# app = Flask("reportbot")
 db = SQLAlchemy()
 
 DB_URL = os.environ.get("DB_URL", "")
