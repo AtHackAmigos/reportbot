@@ -57,7 +57,7 @@ var ctx_donut = $("#donutChart").get(0).getContext("2d");
 
     $.getJSON("/hired.json", function (data) {
         phones=data;
-        var myDonutChart = new Chart(ctx_donut).Doughnut(data,
+        var myDonutChart = new Chart(ctx_donut).Doughnut(phones,
                                                      options);
     $('#donutLegend').html(myDonutChart.generateLegend());
 });
