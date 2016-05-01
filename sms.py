@@ -17,7 +17,10 @@ def handle_sms_callback(request):
   (is_pulse, answer_value_type) = last_question_type(from_number)
 
   if is_pulse:
-    _handle_weekly_checkup(from_number)
+    if not _handle_weekly_checkup(request, from_number):
+      resp = twilio.twiml.Response()
+      resp.message("Sorry, invalid response. Please try again.")
+      return str(resp)
 
   if answer_value_type == Question.VALUE_TYPE_UNKNOWN:
     resp = twilio.twiml.Response()
@@ -37,5 +40,13 @@ def _register_new_user(from_number):
   resp.message("Welcome to ReportBot! (We will keep your number " + from_number + " confidential.)")
   return str(resp)
 
-def _handle_weekly_checkup(from_number):
-  pass
+def _handle_weekly_checkup(request, from_number):
+  body = request.values.get("Body", None)
+  if body == "1":
+    db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_PULSE))
+    return True
+  elif body == "2":
+    db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_LOST))
+    return True
+  else:
+    return False
