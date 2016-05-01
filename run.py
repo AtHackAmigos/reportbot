@@ -1,9 +1,10 @@
 #!venv/bin/python
 import os
-from flask import Flask, request
 from flask import Flask, render_template, request
 from model import connect, db, Registry, Event, Log
 from sms import handle_sms_callback
+import json
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -24,6 +25,15 @@ def home():
   data = data_to_display(registry)
   return render_template('homepage.html', registry=registry,data=data)
 
+@app.route('/hired.json')
+def phone_data():
+  hired = Event.query.filter_by(event_type=1).order_by(Event.timestamp).all()
+  return json.dumps([i.serialize() for i in hired])
+
+@app.route('/event.json')
+def event_data():
+  events = Event.query.all()
+  return json.dumps([i.serialize() for i in events])
 
 def data_to_display(registry):
   data = {}

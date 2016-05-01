@@ -16,6 +16,11 @@ class Registry(db.Model):
 
   phone = db.Column(db.String(32), primary_key=True)
 
+  def serialize(self):
+    return {
+        'phone': self.phone,
+    }
+
   def __repr__(self):
     return "<Registry phone=%s>" % self.phone
 
@@ -36,6 +41,14 @@ class Event(db.Model):
   phone = db.Column(db.String(32), db.ForeignKey("registry.phone"))
   data = db.Column(db.Integer)
   log = db.Column(db.Integer, db.ForeignKey("log.log_id"))
+
+  def serialize(self):
+    return {
+        'event_type': str(self.event_type),
+        'timestamp': str(self.timestamp),
+        'phone': self.phone,
+        'data': str(self.data),
+    }
 
   def __repr__(self):
     return "<Event event_id=%s, event_type=%s, timestamp=%s, phone=%s, data=%s, log=%s>" % (
@@ -198,6 +211,10 @@ def send_pulse():
   db.session.commit()
   msg = Question.query.filter_by(question_id=1).first().text
   return send_phones, msg
+
+
+def phone_exists(phone):
+  return bool(Registry.query.filter_by(phone=phone).first());
 
 
 def last_question_type(phone):
