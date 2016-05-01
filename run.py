@@ -60,6 +60,7 @@ def send_pulse():
 def timer_tick():
   phone_numbers, msg = send_pulse()
   return "To %s %s" % (phone_numbers, msg)
+  send_sms()
 
 def data_to_display(registry):
   data = {}
