@@ -22,9 +22,12 @@ class Registry(db.Model):
 class Event(db.Model):
   """Data model for Event."""
   __tablename__ = "event"
-  HIRE = 0
-  PULSE = 1
-  LOST = 2
+  EVENT_TYPE_UNKNOWN = 0
+  EVENT_TYPE_HIRE = 1
+  EVENT_TYPE_PULSE = 2
+  EVENT_TYPE_LOST = 3
+  EVENT_TYPE_QUESTION = 4
+  EVENT_TYPE_ANSWER = 5
 
   event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   event_type = db.Column(db.Integer)
@@ -52,6 +55,25 @@ class Log(db.Model):
   def __repr__(self):
     return "<Log log_id=%d, text=%s>" % (self.log_id, self.text)
 
+
+class Question(db.Model):
+  """Data model for Question."""
+  __tablename__ = "question"
+
+  VALUE_TYPE_UNKNOWN = 0
+  VALUE_TYPE_STRING = 1
+  VALUE_TYPE_INTEGER = 2
+  VALUE_TYPE_MC_2 = 3
+  VALUE_TYPE_MC_3 = 4
+  VALUE_TYPE_MC_4 = 5
+
+  question_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  text = db.Column(db.String(256))
+  value_type = db.Column(db.Integer)
+
+  def __repr__(self):
+    return "<Question question_id=%d, text=%s, value_type=%d>" % (self.question_id, self.text, self.value_type)
+
 ## Debug functions. ##
 
 def connect(app):
@@ -67,6 +89,9 @@ def print_tables():
   print "== table registry ==="
   for phone in Registry.query.all():
     print phone
+  print "== table question ==="
+  for question in Question.query.all():
+    print question
   print "== table events ==="
   for event in Event.query.all():
     print event
@@ -75,12 +100,16 @@ def print_tables():
     print log
 
 
-def tear_down():
+def clear_tables():
   meta = db.metadata
   for table in reversed(meta.sorted_tables):
     print 'Clear table %s' % table
     db.session.execute(table.delete())
   db.session.commit()
+
+
+def tear_down():
+  clear_tables()
   db.reflect()
   db.drop_all()
 
@@ -93,30 +122,44 @@ def create_mock_dataset():
   db.session.add(p1)
   db.session.add(p2)
   db.session.commit()
-  db.session.add(Event(phone=p0.phone, event_type=Event.HIRE))
-  db.session.add(Event(phone=p1.phone, event_type=Event.HIRE))
-  db.session.add(Event(phone=p2.phone, event_type=Event.HIRE))
-  db.session.add(Event(phone=p0.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p1.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p2.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p0.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p1.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p2.phone, event_type=Event.PULSE))
-  db.session.add(Event(phone=p0.phone, event_type=Event.LOST))
-  db.session.add(Event(phone=p1.phone, event_type=Event.PULSE))
+  db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_HIRE))
+  db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_HIRE))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_HIRE))
+  db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_LOST))
+  db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_PULSE))
+  db.session.add(Question(text="Are you still in touch with your daughter?", value_type=Question.VALUE_TYPE_MC_2))
+  db.session.add(Question(text="Where does your daughter work?", value_type=Question.VALUE_TYPE_STRING))
+  db.session.commit()
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=1))
+  l = Log(text="1")
+  db.session.add(l)
+  db.session.commit()
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_ANSWER, data=1, log=l.log_id))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=2))
+  l = Log(text="Mountain View, CA")
+  db.session.add(l)
+  db.session.commit()
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_ANSWER, data=1, log=l.log_id))
   db.session.commit()
 
 
 def phone_exists(phone):
-  return bool(Registry.query.filter_by(phone=phone));
+  return bool(Registry.query.filter_by(phone=phone).first());
 
 def main(argv):
   if not len(argv):
-    print "Specify command: setup_table, create_mock, print_tables, clean, phone_exists"
+    print "Specify command: setup_table, create_mock, print_tables, clear_tables, clean, phone_exists"
 
   cmd = argv[1];
 
-  connect(app)
+  print "Connect..."
+  connect(Flask("test-bot"))
   print "Connected to DB."
 
   if cmd == "setup_table":
@@ -127,6 +170,8 @@ def main(argv):
     print "created mock data."
   elif cmd == "print_tables":
     print_tables()
+  elif cmd == "clear_tables":
+    clear_tables()
   elif cmd == "phone_exists":
     print "Phone %s in the registry? %s" % (argv[2], phone_exists(argv[2]))
   elif cmd == "clean":
