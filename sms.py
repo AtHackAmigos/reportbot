@@ -6,12 +6,12 @@ def phone_exists(phone):
   from model import Registry
   return bool(Registry.query.filter_by(phone=phone).first());
 
-def record_sms(db, request):
+def handle_sms_callback(db, request):
   from_number = request.values.get("From", None)
   if from_number is None:
   	resp = twilio.twiml.Response()
-    resp.message("Sorry, your number is unknown")
-    return str(resp)
+  	resp.message("Sorry, your number is unknown")
+  	return str(resp)
 
   if not phone_exists(from_number):
   	return _register_new_user(from_number)
