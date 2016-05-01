@@ -3,14 +3,14 @@ import os
 from flask import Flask, request
 from flask import Flask, render_template, request
 from model import connect, db, Registry, Event, Log
-import sms
+from sms import handle_sms_callback
 
 app = Flask(__name__)
 
 
 @app.route('/api/sms', methods=['GET', 'POST'])
 def record_sms():
-  return sms.record_sms(db, request)
+  return handle_sms_callback(db, request)
 
 
 @app.route('/map')
