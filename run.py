@@ -1,7 +1,7 @@
 #!venv/bin/python
 import os
 from flask import Flask, render_template, request
-from model import connect, db, Registry, Event, Log
+from model import connect, db, Registry, Event, Question, Log
 from sms import handle_sms_callback
 import json
 from flask import jsonify
@@ -43,6 +43,24 @@ def phone_data():
 def event_data():
   events = Event.query.all()
   return json.dumps([i.serialize() for i in events])
+
+def send_pulse():
+  lost_phones_query = Event.query.filter_by(event_type=Event.EVENT_TYPE_LOST).order_by(Event.phone).all()
+  lost_phones = {l.phone for l in lost_phones_query}
+  all_phones_query = Event.query.all()
+  all_phones = {a.phone for a in all_phones_query}
+  send_phones = sorted(all_phones - lost_phones)
+  for phone in send_phones:
+    db.session.add(Event(phone=phone, event_type=Event.EVENT_TYPE_QUESTION, data=1))
+  db.session.commit()
+  msg = Question.query.filter_by(question_id=1).first().text
+  return send_phones, msg
+
+@app.route('/timer_tick')
+def timer_tick():
+  phone_numbers, msg = send_pulse()
+  print phone_numbers
+  print msg
 
 def data_to_display(registry):
   data = {}
