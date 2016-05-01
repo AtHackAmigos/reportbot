@@ -3,11 +3,12 @@ import sys
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 
-# app = Flask("reportbot")
 db = SQLAlchemy()
 
 DB_URL = os.environ.get("DB_URL", "")
+
 
 class Registry(db.Model):
   """Data model for Registry."""
@@ -100,6 +101,16 @@ def print_tables():
     print log
 
 
+def setup_table():
+  # Setup schema.
+  db.create_all()
+  # Setup question table.
+  db.session.add(Question(text="Are you still in touch with your daughter?", value_type=Question.VALUE_TYPE_MC_2))
+  db.session.add(Question(text="How old is your daughter?", value_type=Question.VALUE_TYPE_INTEGER))
+  db.session.add(Question(text="Where does your daughter work?", value_type=Question.VALUE_TYPE_STRING))
+  db.session.commit()
+
+
 def clear_tables():
   meta = db.metadata
   for table in reversed(meta.sorted_tables):
@@ -133,15 +144,13 @@ def create_mock_dataset():
   db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_PULSE))
   db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_LOST))
   db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_PULSE))
-  db.session.add(Question(text="Are you still in touch with your daughter?", value_type=Question.VALUE_TYPE_MC_2))
-  db.session.add(Question(text="Where does your daughter work?", value_type=Question.VALUE_TYPE_STRING))
   db.session.commit()
-  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=1))
-  l = Log(text="1")
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=2))
+  l = Log(text="14")
   db.session.add(l)
   db.session.commit()
-  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_ANSWER, data=1, log=l.log_id))
-  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=2))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_ANSWER, data=14, log=l.log_id))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=3))
   l = Log(text="Mountain View, CA")
   db.session.add(l)
   db.session.commit()
@@ -152,9 +161,40 @@ def create_mock_dataset():
 def phone_exists(phone):
   return bool(Registry.query.filter_by(phone=phone).first());
 
+
+def send_pulse():
+  lost_phones_query = Event.query.filter_by(event_type=Event.EVENT_TYPE_LOST).order_by(Event.phone).all()
+  lost_phones = {l.phone for l in lost_phones_query}
+  all_phones_query = Event.query.all()
+  all_phones = {a.phone for a in all_phones_query}
+  send_phones = sorted(all_phones - lost_phones)
+  for phone in send_phones:
+    db.session.add(Event(phone=phone, event_type=Event.EVENT_TYPE_QUESTION, data=1))
+  db.session.commit()
+  msg = Question.query.filter_by(question_id=1).first().text
+  return send_phones, msg
+
+
+def last_question_type(phone):
+  # Return (is_pulse, answer_value_type) tuple
+  event_query = Event.query.filter_by(phone=phone).order_by(desc(Event.timestamp)).first()
+  if not event_query or event_query.event_type != Event.EVENT_TYPE_QUESTION:
+    return (False, Question.VALUE_TYPE_UNKNOWN)
+  question_query = Question.query.filter_by(question_id=event_query.data).first()
+  return bool(question_query.question_id == 1), question_query.value_type
+
+
 def main(argv):
   if not len(argv):
-    print "Specify command: setup_table, create_mock, print_tables, clear_tables, clean, phone_exists"
+    print "Specify command: "
+    print "  setup_table"
+    print "  create_mock"
+    print "  print_tables"
+    print "  send_pulse"
+    print "  clear_tables"
+    print "  clean"
+    print "  phone_exists"
+    print "  last_question_type <phone>"
 
   cmd = argv[1];
 
@@ -163,8 +203,8 @@ def main(argv):
   print "Connected to DB."
 
   if cmd == "setup_table":
-    db.create_all()
-    print "Created schema."
+    setup_table()
+    print "SetUp."
   elif cmd == "create_mock":
     create_mock_dataset()
     print "created mock data."
@@ -172,6 +212,12 @@ def main(argv):
     print_tables()
   elif cmd == "clear_tables":
     clear_tables()
+  elif cmd == "send_pulse":
+    print send_pulse()
+  elif cmd == "last_question_type":
+    if len(argv) < 3:
+      print "Missing argument"
+    print "Last question asked has type: %s, %s" % last_question_type(argv[2])
   elif cmd == "phone_exists":
     print "Phone %s in the registry? %s" % (argv[2], phone_exists(argv[2]))
   elif cmd == "clean":

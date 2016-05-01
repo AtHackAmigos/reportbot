@@ -1,19 +1,16 @@
 #!venv/bin/python
 import os
 from flask import Flask, request
-from twilio.util import TwilioCapability
-import twilio.twiml
 from flask import Flask, render_template, request
-from model import connect, Registry, Event, Log
+from model import connect, db, Registry, Event, Log
+from sms import handle_sms_callback
 
 app = Flask(__name__)
 
 
 @app.route('/api/sms', methods=['GET', 'POST'])
-def welcome():
-  resp = twilio.twiml.Response()
-  resp.say("Welcome to Twilio")
-  return str(resp)
+def record_sms():
+  return handle_sms_callback(request)
 
 
 @app.route('/map')
@@ -37,8 +34,8 @@ def data_to_display(registry):
 
 
 if __name__ == "__main__":
-    connect(app)
-    print "Connected to DB."
+  connect(app)
+  print "Connected to DB."
 
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+  port = int(os.environ.get("PORT", 5000))
+  app.run(host='0.0.0.0', port=port, debug=True)
