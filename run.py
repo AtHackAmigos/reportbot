@@ -5,7 +5,7 @@ from model import connect, db, Registry, Event, Log
 from sms import handle_sms_callback
 import json
 from flask import jsonify
-
+from datetime import datetime, date, time, timedelta
 app = Flask(__name__)
 
 
@@ -27,8 +27,17 @@ def home():
 
 @app.route('/hired.json')
 def phone_data():
-  hired = Event.query.filter_by(event_type=1).order_by(Event.timestamp).all()
-  return json.dumps([i.serialize() for i in hired])
+  hired1 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-datetime.timedelta(minutes=1), now()).all()
+  hired2 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-datetime.timedelta(minutes=2), datetime.now()-datetime.timedelta(minutes=1)).all()
+  hired3 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-datetime.timedelta(minutes=3), datetime.now()-datetime.timedelta(minutes=2)).all()
+  hired4 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-datetime.timedelta(minutes=4), datetime.now()-datetime.timedelta(minutes=3)).all()
+  hired5 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-datetime.timedelta(minutes=5), datetime.now()-datetime.timedelta(minutes=4)).all()
+  return json.dumps({'h1': [i.serialize() for i in hired1].size(),
+'h2': [i.serialize() for i in hired2].size(),
+'h3': [i.serialize() for i in hired3].size(),
+'h4': [i.serialize() for i in hired4].size(),
+'h5': [i.serialize() for i in hired5].size(),
+})
 
 @app.route('/event.json')
 def event_data():
