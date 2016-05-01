@@ -4,7 +4,6 @@
 
 <canvas id="hired" width="600" height="400"></canvas>
 <script>
-
      $.getJSON("/hired.json", function (data) {
          phones=data;
     var pieData = [
@@ -33,7 +32,6 @@
         var countries= document.getElementById("hired").getContext("2d");
         new Chart(countries).PolarArea(pieData);
  });
-
 </script>
 
 {% endblock %}
