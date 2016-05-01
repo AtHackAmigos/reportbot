@@ -42,6 +42,16 @@ class Event(db.Model):
   data = db.Column(db.Integer)
   log = db.Column(db.Integer, db.ForeignKey("log.log_id"))
 
+  def serialize(self):
+    return {
+        'event_id': self.event_id,
+        'event_type': self.event_type,
+        'timestamp': self.timestamp,
+        'phone': self.phone,
+        'data': self.data,
+        'log': self.log,
+    }
+
   def __repr__(self):
     return "<Event event_id=%s, event_type=%s, timestamp=%s, phone=%s, data=%s, log=%s>" % (
         self.event_id,
