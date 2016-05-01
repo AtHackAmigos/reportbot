@@ -2,25 +2,53 @@
 
 {% block content %}
 
-{% for item in data %}
-<table class="table">
-<tr>
-{{ item }}
-    {% for event in data[item] %}
-    <td>
-        {{ event }}
-    </td>
-    {% endfor %}
-</tr>
-</table>
+<div class="melon-chart">
+  <canvas id="donutChart"></canvas>
+  <div id="donutLegend" class="chart-legend"></div>
+<div>
 
 <script>
     var phones = new Object();
-    $.get('/phone.json', function(data){
-        phones = data;
-    })
-</script>
 
-{% endfor %}
+    $.getJSON("/hired.json", function (data) {
+        phones=data;
+});
+
+    var data = {
+    datasets: [{
+        data: [
+            phones['h1'],
+            phones['h2'],
+            phones['h3'],
+            phones['h4'],
+            phones['h5']
+        ],
+        backgroundColor: [
+            "#FF6384",
+            "#4BC0C0",
+            "#FFCE56",
+            "#E7E9ED",
+            "#36A2EB"
+        ],
+        label: 'My dataset' // for legend
+    }],
+    labels: [
+        "Red",
+        "Green",
+        "Yellow",
+        "Grey",
+        "Blue"
+    ]
+};
+
+    var options = { responsive: true };
+
+    var ctx_donut = $("#donutChart").get(0).getContext("2d");
+    new Chart(ctx, {
+        data: data,
+        type: 'polarArea',
+        options: options
+});
+</script>
 
 {% endblock %}
