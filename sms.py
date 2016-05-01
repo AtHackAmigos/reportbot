@@ -9,10 +9,13 @@ ACCOUNT_SID = os.environ.get("ACCOUNT_SID", "")
 AUTH_TOKEN = os.environ.get("AUTH_TOKEN", "")
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
-def send_sms():
-  print "DEBUG: sending sms"
-  message = client.messages.create(to="+14048278486", from_="+17203994804", body="Hello there!")
-  print "DEBUG: %s" % message
+def send_sms(phone_numbers, msg):
+  for phone_number in phone_numbers:
+    try:
+      message = client.messages.create(to=phone_number, from_="+14087400680", body=msg)
+      print "DEBUG: %s" % message
+    except:
+      pass
 
 def handle_sms_callback(request):
   from_number = request.values.get("From", None)
