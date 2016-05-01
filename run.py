@@ -13,12 +13,6 @@ app = Flask(__name__)
 def record_sms():
   return handle_sms_callback(request)
 
-
-@app.route('/map')
-def map():
-  return render_template('map.html')
-
-
 @app.route('/')
 def home():
   registry = Registry.query.all()
