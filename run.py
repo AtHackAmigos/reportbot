@@ -28,7 +28,7 @@ def home():
 @app.route('/phone.json')
 def phone_data():
   registry = Registry.query.all()
-  return jsonify(registry)
+  return jsonify(json_list=registry)
 
 def data_to_display(registry):
   data = {}
