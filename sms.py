@@ -11,10 +11,10 @@ client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
 def send_sms():
   message = client.messages.create(to="+14048278486", from_="+17293994804", body="Hello there!")
+  print "DEBUG: %s" % message
 
 def handle_sms_callback(request):
   from_number = request.values.get("From", None)
-  print "DEBUG: request.values: %s" % request.values
   if from_number is None:
     resp = twilio.twiml.Response()
     resp.message("Sorry, your number is unknown")
