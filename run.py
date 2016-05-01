@@ -27,7 +27,7 @@ def home():
 
 @app.route('/hired.json')
 def phone_data():
-  hired1 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=1), now())).all()
+  hired1 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=1), datetime.now())).all()
   hired2 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=2), datetime.now()-timedelta(minutes=1))).all()
   hired3 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=3), datetime.now()-timedelta(minutes=2))).all()
   hired4 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=4), datetime.now()-timedelta(minutes=3))).all()
