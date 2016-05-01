@@ -9,6 +9,7 @@ db = SQLAlchemy()
 
 DB_URL = os.environ.get("DB_URL", "")
 
+
 class Registry(db.Model):
   """Data model for Registry."""
   __tablename__ = "registry"
