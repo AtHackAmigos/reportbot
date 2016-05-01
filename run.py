@@ -35,13 +35,18 @@ def welcome():
   resp.say("Welcome to Twilio")
   return str(resp)
 
+
+@app.route('/map')
+def map():
+  return render_template('map.html')
+
 @app.route('/home')
 def home():
   registry = Registry.query.all()
   data = data_to_display(registry)
 
 
-  return render_template("homepage.html", registry=registry,data=data)
+  return render_template('homepage.html', registry=registry,data=data)
 
 def data_to_display(registry):
   data = {}
