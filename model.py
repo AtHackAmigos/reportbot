@@ -16,6 +16,11 @@ class Registry(db.Model):
 
   phone = db.Column(db.String(32), primary_key=True)
 
+  def serialize(self):
+    return {
+        'phone': self.phone,
+    }
+
   def __repr__(self):
     return "<Registry phone=%s>" % self.phone
 
