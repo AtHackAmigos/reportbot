@@ -4,7 +4,7 @@ from flask import Flask, request
 from twilio.util import TwilioCapability
 import twilio.twiml
 from flask import Flask, render_template, request
-from model import connect, Registry
+from model import connect, Registry, Event, Log
 
 app = Flask(__name__)
 
@@ -35,18 +35,31 @@ def welcome():
   resp.say("Welcome to Twilio")
   return str(resp)
 
+
+@app.route('/map')
+def map():
+  return render_template('map.html')
+
 @app.route('/home')
 def home():
-  all_stuff = registry.query.all()
+  registry = Registry.query.all()
+  data = data_to_display(registry)
 
-  return render_template("homepage.html", all_stuff=all_stuff)
+
+  return render_template('homepage.html', registry=registry,data=data)
+
+def data_to_display(registry):
+  data = {}
+  for row in registry:
+    user_events = Event.query.filter(Event.phone == row.phone).all()
+    data[row.phone] = user_events
+
+  return data
 
 
 if __name__ == "__main__":
-    # As a convenience that will allow us to work with db directly.
-    from server import app
     connect(app)
     print "Connected to DB."
 
-  port = int(os.environ.get("PORT", 5000))
-  app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

@@ -2,8 +2,18 @@
 
 {% block content %}
 
-HELLO DO YOU SEE ME NOW?
+{% for item in data %}
+<table class="table">
+<tr>
+{{ item }}
+    {% for event in data[item] %}
+    <td>
+        {{ event }}
+    </td>
+    {% endfor %}
+</tr>
+</table>
 
-{{ all_stuff }}
+{% endfor %}
 
 {% endblock %}
