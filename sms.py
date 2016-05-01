@@ -1,7 +1,16 @@
 #!venv/bin/python
+
+import os
 import twilio.twiml
+from twilio.rest import TwilioRestClient
 from model import db, last_question_type, phone_exists, Event, Question, Registry
 
+ACCOUNT_SID = os.environ.get("ACCOUNT_SID", "")
+AUTH_TOKEN = os.environ.get("AUTH_TOKEN", "")
+client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
+
+def send_sms():
+  message = client.messages.create(to="+14048278486", from_="+17293994804", body="Hello there!")
 
 def handle_sms_callback(request):
   from_number = request.values.get("From", None)
