@@ -67,6 +67,7 @@ class Question(db.Model):
   VALUE_TYPE_MC_2 = 3
   VALUE_TYPE_MC_3 = 4
   VALUE_TYPE_MC_4 = 5
+  VALUE_TYPE_MC_5 = 6
 
   question_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   text = db.Column(db.String(256))
@@ -101,15 +102,39 @@ def print_tables():
     print log
 
 
-def setup_table():
+def setup():
   # Setup schema.
   db.create_all()
-  # Setup question table.
-  db.session.add(Question(text="Are you still in touch with your daughter?", value_type=Question.VALUE_TYPE_MC_2))
-  db.session.add(Question(text="How old is your daughter?", value_type=Question.VALUE_TYPE_INTEGER))
-  db.session.add(Question(text="Where does your daughter work?", value_type=Question.VALUE_TYPE_STRING))
-  db.session.commit()
+  setup_questions()
 
+def setup_questions():
+  # Setup question table.
+  questions = [
+      (Question.VALUE_TYPE_MC_2,
+       "Are you still in touch with the worker?"),
+      (Question.VALUE_TYPE_MC_2,
+       "Welcome to Reportbot. We have some questions, Press 1 to continue if interested, otherwise we will send you a weekly check up next week."),
+      (Question.VALUE_TYPE_MC_3,
+       "How are you related to the worker? Press 1 for Parents, 2 for Family, 3 for Friend?"),
+      (Question.VALUE_TYPE_MC_5,
+       "Who referred the worker to this oppty? Press 1 for Friend, 2 for Family, 3 for Community Leader, 4 for Recruiter, 5 for Other?"),
+      (Question.VALUE_TYPE_STRING,
+       "What is the recruiter's phone number? Enter 0 if not sure"),
+      (Question.VALUE_TYPE_STRING,
+       "Where are they going to work? Enter city or country"),
+      (Question.VALUE_TYPE_MC_3,
+       "What type of job will they do? Press 1 for Domestic Service, 2 for Factory, 3 for Farm/Fishing, 4 for Other"),
+      (Question.VALUE_TYPE_MC_3,
+       "How old is the worker?"),
+      (Question.VALUE_TYPE_MC_3,
+       "What is the worker's gender? Press 1 for Male, 2 for Female"),
+      (Question.VALUE_TYPE_MC_3,
+       "Can we follow-up again? Press 1 for Yes, 2 for No"),
+  ]
+
+  for q in questions:
+    db.session.add(Question(text=q[1], value_type=q[0]))
+  db.session.commit()
 
 def clear_tables():
   meta = db.metadata
@@ -145,12 +170,12 @@ def create_mock_dataset():
   db.session.add(Event(phone=p0.phone, event_type=Event.EVENT_TYPE_LOST))
   db.session.add(Event(phone=p1.phone, event_type=Event.EVENT_TYPE_PULSE))
   db.session.commit()
-  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=2))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=7))
   l = Log(text="14")
   db.session.add(l)
   db.session.commit()
   db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_ANSWER, data=14, log=l.log_id))
-  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=3))
+  db.session.add(Event(phone=p2.phone, event_type=Event.EVENT_TYPE_QUESTION, data=5))
   l = Log(text="Mountain View, CA")
   db.session.add(l)
   db.session.commit()
@@ -184,6 +209,25 @@ def last_question_type(phone):
   return bool(question_query.question_id == 1), question_query.value_type
 
 
+def welcome(phone):
+  db.session.add(Event(phone=phone, event_type=Event.EVENT_TYPE_QUESTION, data=2))
+  db.session.commit()
+
+# def next_question(phone):
+#   event_query = Event.query.filter_by(phone=phone, event_type=Event.EVENT_TYPE_QUESTION).order_by(desc(Event.timestamp)).first()
+#   if not event_query or event_query.data == 1:
+#     return None
+#   if event_query.data == 2:
+#     event_a_query = Event.query.filter_by(phone=phone, event_type=Event.EVENT_TYPE_ANSWER).order_by(desc(Event.timestamp)).first()
+#     if not event_a_query or event_a_query.timestamp < event_query.timestamp:
+#       # No answer or answer pre-dates question.
+#       return None
+#   if event_query.data < 9:
+#     question_query = Question.query.filter_by(question_id=event_query.data+1).first()
+#     db.session.add(Event(phone=phone, event_type=Event.EVENT_TYPE_QUESTION, data=event_query.data+1))
+#     return question_query.text
+#   return None
+
 def main(argv):
   if not len(argv):
     print "Specify command: "
@@ -202,8 +246,8 @@ def main(argv):
   connect(Flask("test-bot"))
   print "Connected to DB."
 
-  if cmd == "setup_table":
-    setup_table()
+  if cmd == "setup":
+    setup()
     print "SetUp."
   elif cmd == "create_mock":
     create_mock_dataset()
