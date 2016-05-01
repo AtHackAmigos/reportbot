@@ -5,7 +5,7 @@ from model import db, last_question_type, phone_exists, Event, Question, Registr
 
 def handle_sms_callback(request):
   from_number = request.values.get("From", None)
-  print "DEBUG: request.values: " + request.values
+  print "DEBUG: request.values: %s" % request.values
   if from_number is None:
     resp = twilio.twiml.Response()
     resp.message("Sorry, your number is unknown")
