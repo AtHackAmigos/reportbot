@@ -2,7 +2,7 @@
 import os
 from flask import Flask, render_template, request
 from model import connect, db, Registry, Event, Question, Log
-from sms import handle_sms_callback
+from sms import handle_sms_callback, send_sms
 import json
 from flask import jsonify
 from datetime import datetime, date, time, timedelta
@@ -60,6 +60,7 @@ def send_pulse():
 def timer_tick():
   phone_numbers, msg = send_pulse()
   return "To %s %s" % (phone_numbers, msg)
+  send_sms()
 
 def data_to_display(registry):
   data = {}
