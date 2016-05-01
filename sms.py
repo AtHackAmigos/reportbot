@@ -21,7 +21,7 @@ def handle_sms_callback(request):
 
   if answer_value_type == Question.VALUE_TYPE_UNKNOWN:
   	resp = twilio.twiml.Response()
-    resp.message("You have signed up already. Stay tunned for a follow up message next week :)")
+  	resp.message("You have signed up already. Stay tunned for a follow up message next week :)")
     return str(resp)
 
 
