@@ -175,6 +175,10 @@ def send_pulse():
   return send_phones, msg
 
 
+def phone_exists(phone):
+  return bool(Registry.query.filter_by(phone=phone).first());
+
+
 def last_question_type(phone):
   # Return (is_pulse, answer_value_type) tuple
   event_query = Event.query.filter_by(phone=phone).order_by(desc(Event.timestamp)).first()
