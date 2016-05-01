@@ -10,6 +10,7 @@ AUTH_TOKEN = os.environ.get("AUTH_TOKEN", "")
 client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN)
 
 def send_sms():
+  print "DEBUG: sending sms"
   message = client.messages.create(to="+14048278486", from_="+17293994804", body="Hello there!")
   print "DEBUG: %s" % message
 
