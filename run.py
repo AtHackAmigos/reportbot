@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 @app.route('/api/sms', methods=['GET', 'POST'])
 def record_sms():
-  return handle_sms_callback(db, request)
+  return handle_sms_callback(request)
 
 
 @app.route('/map')
