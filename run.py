@@ -9,6 +9,10 @@ from model import connect, db, Registry, Event, Log
 app = Flask(__name__)
 
 
+def phone_exists(phone):
+  return bool(Registry.query.filter_by(phone=phone).first());
+
+
 @app.route('/api/sms', methods=['GET', 'POST'])
 def record_sms():
   resp = twilio.twiml.Response()
