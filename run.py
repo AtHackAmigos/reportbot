@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from model import connect, db, Registry, Event, Log
 from sms import handle_sms_callback
 import json
-import jsonify
+from flask import jsonify
 
 app = Flask(__name__)
 
