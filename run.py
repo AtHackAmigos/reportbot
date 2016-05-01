@@ -4,15 +4,31 @@ from flask import Flask, request
 from twilio.util import TwilioCapability
 import twilio.twiml
 from flask import Flask, render_template, request
-from model import connect, Registry, Event, Log
+from model import connect, db, Registry, Event, Log
 
 app = Flask(__name__)
 
 
 @app.route('/api/sms', methods=['GET', 'POST'])
-def welcome():
+def record_sms():
   resp = twilio.twiml.Response()
-  resp.say("Welcome to Twilio")
+  from_number = request.values.get("From", None)
+  if from_number is None:
+    resp.message("Sorry, your number is unknown")
+    return str(resp)
+
+  if not phone_exists(from_number):
+    new_phone = Registry(phone=from_number)
+    db.session.add(new_phone)
+    db.session.commit()
+    db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_HIRE))
+    db.session.commit()
+    resp.message("Welcome to ReportBot! (We will keep your number " +
+      from_number + " confidential.)")
+    return str(resp)
+
+  resp.message("You have signed up already. " +
+    "Stay tunned for a follow up message next week :)")
   return str(resp)
 
 
