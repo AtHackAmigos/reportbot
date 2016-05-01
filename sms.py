@@ -34,6 +34,10 @@ def handle_sms_callback(request):
       resp = twilio.twiml.Response()
       resp.message("Sorry, invalid response. Please try again.")
       return str(resp)
+    else:
+      resp = twilio.twiml.Response()
+      resp.message("Thank you!")
+      return str(resp)
 
   if answer_value_type == Question.VALUE_TYPE_UNKNOWN:
     resp = twilio.twiml.Response()
