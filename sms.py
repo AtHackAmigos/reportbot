@@ -7,21 +7,21 @@ def handle_sms_callback(request):
   from_number = request.values.get("From", None)
   print "DEBUG: request.values: " + request.values
   if from_number is None:
-  	resp = twilio.twiml.Response()
-  	resp.message("Sorry, your number is unknown")
-  	return str(resp)
+    resp = twilio.twiml.Response()
+    resp.message("Sorry, your number is unknown")
+    return str(resp)
 
   if not phone_exists(from_number):
-  	return _register_new_user(from_number)
+    return _register_new_user(from_number)
 
   (is_pulse, answer_value_type) = last_question_type(from_number)
 
   if is_pulse:
-  	_handle_weekly_checkup(from_number)
+    _handle_weekly_checkup(from_number)
 
   if answer_value_type == Question.VALUE_TYPE_UNKNOWN:
-  	resp = twilio.twiml.Response()
-  	resp.message("You have signed up already. Stay tunned for a follow up message next week :)")
+    resp = twilio.twiml.Response()
+    resp.message("You have signed up already. Stay tunned for a follow up message next week :)")
     return str(resp)
 
 
