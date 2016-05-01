@@ -52,9 +52,9 @@ def send_pulse():
 
 @app.route('/timer_tick')
 def timer_tick():
+  send_sms()
   phone_numbers, msg = send_pulse()
   return "To %s %s" % (phone_numbers, msg)
-  send_sms()
 
 def data_to_display(registry):
   data = {}
