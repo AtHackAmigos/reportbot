@@ -34,8 +34,7 @@ def _register_new_user(from_number):
   db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_HIRE))
   db.session.commit()
   resp = twilio.twiml.Response()
-  resp.message("Welcome to ReportBot! (We will keep your number " +
-  	from_number + " confidential.)")
+  resp.message("Welcome to ReportBot! (We will keep your number " + from_number + " confidential.)")
   return str(resp)
 
 def _handle_weekly_checkup(from_number):
