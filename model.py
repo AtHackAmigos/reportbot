@@ -124,7 +124,7 @@ def setup_questions():
   # Setup question table.
   questions = [
       (Question.VALUE_TYPE_MC_2,
-       "Are you still in touch with the worker?"),
+       "Are you still in touch with the worker? Reply 1 for yes, 2 for no."),
       (Question.VALUE_TYPE_MC_2,
        "Welcome to Reportbot. We have some questions, Press 1 to continue if interested, otherwise we will send you a weekly check up next week."),
       (Question.VALUE_TYPE_MC_3,

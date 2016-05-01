@@ -68,7 +68,6 @@ def data_to_display(registry):
     data[row.phone] = user_events
   return data
 
-
 if __name__ == "__main__":
   connect(app)
   print "Connected to DB."
