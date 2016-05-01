@@ -25,10 +25,15 @@ def home():
   data = data_to_display(registry)
   return render_template('homepage.html', registry=registry,data=data)
 
-@app.route('/phone.json')
+@app.route('/hired.json')
 def phone_data():
-  registry = Registry.query.all()
-  return json.dumps([i.serialize() for i in registry])
+  hired = Event.query.filter_by(event_type=1).order_by(Event.timestamp).all()
+  return json.dumps([i.serialize() for i in hired])
+
+@app.route('/event.json')
+def event_data():
+  events = Event.query.all()
+  return json.dumps([i.serialize() for i in events])
 
 def data_to_display(registry):
   data = {}

@@ -44,12 +44,10 @@ class Event(db.Model):
 
   def serialize(self):
     return {
-        'event_id': self.event_id,
-        'event_type': self.event_type,
-        'timestamp': self.timestamp,
+        'event_type': str(self.event_type),
+        'timestamp': str(self.timestamp),
         'phone': self.phone,
-        'data': self.data,
-        'log': self.log,
+        'data': str(self.data),
     }
 
   def __repr__(self):
