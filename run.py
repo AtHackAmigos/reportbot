@@ -27,7 +27,7 @@ def home():
 
 @app.route('/hired.json')
 def phone_data():
-  hired = Event.query.filter_by(event_type=1).order_by(timestamp).all()
+  hired = Event.query.filter_by(event_type=1).order_by(Event.timestamp).all()
   return json.dumps([i.serialize() for i in hired])
 
 @app.route('/event.json')
