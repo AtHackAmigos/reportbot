@@ -8,8 +8,14 @@
 
 {% for item in data %}
 <table class="table">
+<tr>
 {{ item }}
-{{ data[item] }}
+    {% for event in item %}
+    <td>
+        {{ event }}
+    </td>
+    {% endfor %}
+</tr>
 </table>
 
 {% endfor %}
