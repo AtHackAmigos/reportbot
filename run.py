@@ -2,7 +2,7 @@
 import os
 from flask import Flask, render_template, request
 from model import connect, db, Registry, Event, Question, Log
-from sms import handle_sms_callback
+from sms import handle_sms_callback, send_sms
 import json
 from flask import jsonify
 from datetime import datetime, date, time, timedelta
@@ -12,12 +12,6 @@ app = Flask(__name__)
 @app.route('/api/sms', methods=['GET', 'POST'])
 def record_sms():
   return handle_sms_callback(request)
-
-
-@app.route('/map')
-def map():
-  return render_template('map.html')
-
 
 @app.route('/')
 def home():
@@ -59,6 +53,7 @@ def send_pulse():
 @app.route('/timer_tick')
 def timer_tick():
   phone_numbers, msg = send_pulse()
+  send_sms(phone_numbers, msg)
   return "To %s %s" % (phone_numbers, msg)
 
 def data_to_display(registry):
