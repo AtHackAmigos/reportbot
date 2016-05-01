@@ -8,56 +8,47 @@
 <div>
 
 <script>
-//     var phones = new Object();
+    var phones = new Object();
 
-//     $.getJSON("/hired.json", function (data) {
-//         phones=data;
-// });
-
-//     var data = {
-//     datasets: [{
-//         data: [
-//             phones['h1'],
-//             phones['h2'],
-//             phones['h3'],
-//             phones['h4'],
-//             phones['h5']
-//         ],
-//         backgroundColor: [
-//             "#FF6384",
-//             "#4BC0C0",
-//             "#FFCE56",
-//             "#E7E9ED",
-//             "#36A2EB"
-//         ],
-//         label: 'My dataset' // for legend
-//     }],
-//     labels: [
-//         "Red",
-//         "Green",
-//         "Yellow",
-//         "Grey",
-//         "Blue"
-//     ]
-// };
-
-//     var options = { responsive: true };
-
-//     var ctx = $("#donutChart").get(0).getContext("2d");
-//     new Chart(ctx, {
-//         data: data,
-//         type: 'polarArea',
-//         options: options
-// });
-
-var options = { responsive: true };
-
-var ctx_donut = $("#donutChart").get(0).getContext("2d");
-
-
-    $.getJSON("/hired.json", function (data) {
+$.getJSON("/hired.json", function (data) {
         phones=data;
-        var myDonutChart = new Chart(ctx_donut).Doughnut(phones,
+
+    var chart_data = {
+    datasets: [{
+        data: [
+            phones['h1'],
+            phones['h2'],
+            phones['h3'],
+            phones['h4'],
+            phones['h5']
+        ],
+        backgroundColor: [
+            "#FF6384",
+            "#4BC0C0",
+            "#FFCE56",
+            "#E7E9ED",
+            "#36A2EB"
+        ],
+        label: 'My dataset' // for legend
+    }],
+    labels: [
+        "Red",
+        "Green",
+        "Yellow",
+        "Grey",
+        "Blue"
+    ]
+};
+
+    var options = { responsive: true };
+    var ctx = $("#donutChart").get(0).getContext("2d");
+    new Chart(ctx, {
+        data: chart_data,
+        type: 'polarArea',
+        options: options
+});
+
+    var myDonutChart = new Chart(ctx_donut).Doughnut(phones,
                                                      options);
     $('#donutLegend').html(myDonutChart.generateLegend());
 });
