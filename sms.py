@@ -1,10 +1,7 @@
 #!venv/bin/python
 import twilio.twiml
-from model import db, Event, Registry
+from model import db, phone_exists, Event, Registry
 
-# TODO: Move to helper class.
-def phone_exists(phone):
-  return bool(Registry.query.filter_by(phone=phone).first());
 
 def handle_sms_callback(request):
   from_number = request.values.get("From", None)
