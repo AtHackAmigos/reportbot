@@ -2,14 +2,16 @@
 
 {% block content %}
 
-
-{{ data }}
-
-
 {% for item in data %}
 <table class="table">
+<tr>
 {{ item }}
-{{ data[item] }}
+    {% for event in data[item] %}
+    <td>
+        {{ event }}
+    </td>
+    {% endfor %}
+</tr>
 </table>
 
 {% endfor %}
