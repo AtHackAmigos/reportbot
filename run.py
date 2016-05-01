@@ -32,11 +32,11 @@ def phone_data():
   hired3 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=3), datetime.now()-timedelta(minutes=2))).all()
   hired4 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=4), datetime.now()-timedelta(minutes=3))).all()
   hired5 = Event.query.filter_by(event_type=1).filter(Event.timestamp.between(datetime.now()-timedelta(minutes=5), datetime.now()-timedelta(minutes=4))).all()
-  return json.dumps({'h1': [i.serialize() for i in hired1].size(),
-'h2': [i.serialize() for i in hired2].size(),
-'h3': [i.serialize() for i in hired3].size(),
-'h4': [i.serialize() for i in hired4].size(),
-'h5': [i.serialize() for i in hired5].size(),
+  return json.dumps({'h1': len([i.serialize() for i in hired1]),
+'h2': len([i.serialize() for i in hired2]),
+'h3': len([i.serialize() for i in hired3]),
+'h4': len([i.serialize() for i in hired4]),
+'h5': len([i.serialize() for i in hired5]),
 })
 
 @app.route('/event.json')
