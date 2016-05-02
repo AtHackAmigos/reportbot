@@ -4,33 +4,66 @@
 
 <canvas id="hired" width="600" height="400"></canvas>
 <script>
-     $.getJSON("/hired.json", function (data) {
+     // $.getJSON("/hired.json", function (data) {
+     //     phones=data;
+ //    var pieData = [
+ //            {
+ //                value: phones['h1'],
+ //                color:"#878BB6"
+ //            },
+ //            {
+ //                value : phones['h2'],
+ //                color : "#4ACAB4"
+ //            },
+ //            {
+ //                value : phones['h3'],
+ //                color : "#FF8153"
+ //            },
+ //            {
+ //                value : phones['h4'],
+ //                color : "#FFEA88"
+ //            },
+ //            {
+ //                value : phones['h5'],
+ //                color : "#36A2EB"
+ //            }
+ //        ];
+ //        // Get the context of the canvas element we want to select
+ //        var countries= document.getElementById("hired").getContext("2d");
+ //        new Chart(countries).PolarArea(pieData);
+ // });
+$.getJSON("/hired.json", function (data) {
          phones=data;
-    var pieData = [
-            {
-                value: phones['h1'],
-                color:"#878BB6"
-            },
-            {
-                value : phones['h2'],
-                color : "#4ACAB4"
-            },
-            {
-                value : phones['h3'],
-                color : "#FF8153"
-            },
-            {
-                value : phones['h4'],
-                color : "#FFEA88"
-            },
-            {
-                value : phones['h5'],
-                color : "#36A2EB"
-            }
-        ];
-        // Get the context of the canvas element we want to select
-        var countries= document.getElementById("hired").getContext("2d");
-        new Chart(countries).PolarArea(pieData);
+
+    var pie_data = {
+        datasets: [{
+            data: [
+                phones['h1'],
+                phones['h2'],
+                phones['h3'],
+                phones['h4'],
+                phones['h5'],
+            ],
+            backgroundColor: [
+                "#878BB6",
+                "#4ACAB4",
+                "#FF8153",
+                "#FFEA88",
+                "#36A2EB"
+            ],
+            label: 'ReportBot Data' //for legend
+            }],
+            labels: [
+            "Hired 1",
+            "Hired 2",
+            "Hired 3",
+            "Hired 4",
+            "Hired 5"
+            ]
+    };
+
+        var hired_stuff= document.getElementById("hired").getContext("2d");
+        new Chart(hired_stuff).PolarArea(pieData);
  });
 </script>
 
