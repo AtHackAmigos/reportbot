@@ -64,12 +64,11 @@ $.getJSON("/hired.json", function (data) {
     };
 
         var hired= document.getElementById("hired").getContext("2d");
-        new Chart(hired, {
-        data: pie_data,
-        type: 'polarArea',
-        });
- //        new Chart(hired_stuff).PolarArea(pie_Data);
- // });
+        // new Chart(hired, {
+        // data: pie_data,
+        // type: 'polarArea',
+        // });
+        new Chart(hired).PolarArea(pie_data);
 </script>
 
 {% endblock %}
