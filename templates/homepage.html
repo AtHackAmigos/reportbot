@@ -36,14 +36,6 @@
     $.getJSON("/hired.json", function (data) {
          phones=data;
 
-    var hired= document.getElementById("hired").getContext("2d");
-        // new Chart(hired, {
-        // data: pie_data,
-        // type: 'polarArea',
-        // });
-        new Chart(hired).PolarArea(pie_data);
-    });
-
     var pie_data = {
         datasets: [{
             data: [
@@ -70,6 +62,12 @@
                 "Hired 5"
             ]
     };
+
+    var hired= document.getElementById("hired").getContext("2d");
+        new Chart(hired, {
+        data: pie_data,
+        type: 'polarArea',
+        });
 </script>
 
 {% endblock %}
