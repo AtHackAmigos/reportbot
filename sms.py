@@ -30,14 +30,11 @@ def handle_sms_callback(request):
   (is_pulse, answer_value_type) = last_question_type(from_number)
 
   if is_pulse:
-    if not _handle_weekly_checkup(request, from_number):
-      resp = twilio.twiml.Response()
-      resp.message("Sorry, invalid response. Please try again.")
-      return str(resp)
+    return _handle_weekly_checkup(request, from_number)
 
   if answer_value_type == Question.VALUE_TYPE_UNKNOWN:
     resp = twilio.twiml.Response()
-    resp.message("You have signed up already. Stay tunned for a follow up message next week :)")
+    resp.message("You have signed up already. Stay tuned for a follow up message next week :)")
     return str(resp)
 
 
@@ -57,9 +54,17 @@ def _handle_weekly_checkup(request, from_number):
   body = request.values.get("Body", None)
   if body == "1":
     db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_PULSE))
-    return True
+    db.session.commit()
+    resp = twilio.twiml.Response()
+    resp.message("Thank you!")
+    return str(resp)
   elif body == "2":
     db.session.add(Event(phone=from_number, event_type=Event.EVENT_TYPE_LOST))
-    return True
+    db.session.commit()
+    resp = twilio.twiml.Response()
+    resp.message("Sorry to hear that. We will get in touch with you to help.")
+    return str(resp)
   else:
-    return False
+    resp = twilio.twiml.Response()
+    resp.message("Sorry, invalid response. Please try again.")
+    return str(resp)
