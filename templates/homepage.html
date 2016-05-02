@@ -33,8 +33,15 @@
  //        var countries= document.getElementById("hired").getContext("2d");
  //        new Chart(countries).PolarArea(pieData);
  // });
-$.getJSON("/hired.json", function (data) {
+    $.getJSON("/hired.json", function (data) {
          phones=data;
+
+    var hired= document.getElementById("hired").getContext("2d");
+        // new Chart(hired, {
+        // data: pie_data,
+        // type: 'polarArea',
+        // });
+        new Chart(hired).PolarArea(pie_data);
 
     var pie_data = {
         datasets: [{
@@ -62,13 +69,6 @@ $.getJSON("/hired.json", function (data) {
             "Hired 5"
             ]
     };
-
-        var hired= document.getElementById("hired").getContext("2d");
-        // new Chart(hired, {
-        // data: pie_data,
-        // type: 'polarArea',
-        // });
-        new Chart(hired).PolarArea(pie_data);
 </script>
 
 {% endblock %}
