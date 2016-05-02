@@ -67,8 +67,12 @@ $.getJSON("/hired.json", function (data) {
     };
 
         var hired_stuff= document.getElementById("hired").getContext("2d");
-        new Chart(hired_stuff).PolarArea(pie_Data);
- });
+        new Chart(ctx, {
+        data: pie_data,
+        type: 'polarArea',
+});
+ //        new Chart(hired_stuff).PolarArea(pie_Data);
+ // });
 </script>
 
 {% endblock %}
